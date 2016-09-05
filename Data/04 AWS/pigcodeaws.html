@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc3 {
+}
+.sc4 {
+	font-weight: bold;
+	color: #800040;
+}
+.sc12 {
+}
+.sc24 {
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc0">trades</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">LOAD</span><span class="sc24"> </span><span class="sc0">'s3:</span><span class="sc12">//</span><span class="sc0">iyadamazon</span><span class="sc12">/</span><span class="sc0">data</span><span class="sc12">/</span><span class="sc0">tradesbigdata</span><span class="sc12">.</span><span class="sc0">txt'</span><span class="sc24"> </span><span class="sc4">USING</span><span class="sc24"> </span><span class="sc0">PigStorage('\t')</span><span class="sc24"> </span><span class="sc4">AS</span><span class="sc24"> </span><span class="sc0">(investor_id:int,</span><span class="sc24"> </span><span class="sc0">trade_id:int,</span><span class="sc24"> </span><span class="sc0">rating:int)</span><span class="sc24"> </span><span class="sc0">;</span><span class="sc24">
+
+</span><span class="sc0">trades_2</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">FOREACH</span><span class="sc24"> </span><span class="sc0">trades</span><span class="sc24"> </span><span class="sc4">GENERATE</span><span class="sc24"> </span><span class="sc0">investor_id</span><span class="sc24"> </span><span class="sc4">AS</span><span class="sc24"> </span><span class="sc0">investor_id_2,</span><span class="sc24"> </span><span class="sc0">trade_id</span><span class="sc24"> </span><span class="sc4">AS</span><span class="sc24"> </span><span class="sc0">trade_id_2,</span><span class="sc24"> </span><span class="sc0">rating</span><span class="sc24"> </span><span class="sc4">AS</span><span class="sc24"> </span><span class="sc0">rating_2</span><span class="sc24"> </span><span class="sc0">;</span><span class="sc24">
+</span><span class="sc0">joinedtradeds</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">JOIN</span><span class="sc24"> </span><span class="sc0">trades</span><span class="sc24"> </span><span class="sc4">BY</span><span class="sc24"> </span><span class="sc0">investor_id,</span><span class="sc24"> </span><span class="sc0">trades_2</span><span class="sc24"> </span><span class="sc4">BY</span><span class="sc24"> </span><span class="sc0">investor_id_2</span><span class="sc24"> </span><span class="sc0">;</span><span class="sc24">
+</span><span class="sc0">groupedtrades</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">group</span><span class="sc24">  </span><span class="sc0">joinedtradeds</span><span class="sc24">  </span><span class="sc4">by</span><span class="sc24"> </span><span class="sc0">(trade_id,trade_id_2);</span><span class="sc24">
+</span><span class="sc0">cooccurrence</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">FOREACH</span><span class="sc24"> </span><span class="sc0">groupedtrades</span><span class="sc24"> </span><span class="sc4">GENERATE</span><span class="sc24"> 
+        </span><span class="sc4">group</span><span class="sc12">.</span><span class="sc0">trade_id</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">trade_id,</span><span class="sc24">
+        </span><span class="sc4">group</span><span class="sc12">.</span><span class="sc0">trade_id_2</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">trade_id_2,</span><span class="sc24">
+        </span><span class="sc0">COUNT(</span><span class="sc12">$</span><span class="sc0">1)</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">tradecount;</span><span class="sc24">
+
+</span><span class="sc0">filteredtradesforuser3</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">filter</span><span class="sc24"> </span><span class="sc0">trades</span><span class="sc24"> </span><span class="sc4">BY</span><span class="sc24"> </span><span class="sc0">investor_id</span><span class="sc24"> </span><span class="sc12">==</span><span class="sc24"> </span><span class="sc3">3</span><span class="sc0">;</span><span class="sc24">
+</span><span class="sc0">pre_product_matrix</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">JOIN</span><span class="sc24"> </span><span class="sc0">cooccurrence</span><span class="sc24"> </span><span class="sc4">BY</span><span class="sc24"> </span><span class="sc0">trade_id_2,</span><span class="sc24"> </span><span class="sc0">filteredtradesforuser3</span><span class="sc24"> </span><span class="sc4">BY</span><span class="sc24"> </span><span class="sc0">trade_id</span><span class="sc24"> </span><span class="sc0">;</span><span class="sc24">
+</span><span class="sc0">product_matrix</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">FOREACH</span><span class="sc24"> </span><span class="sc0">pre_product_matrix</span><span class="sc24"> </span><span class="sc4">GENERATE</span><span class="sc24"> 
+        </span><span class="sc12">$</span><span class="sc3">0</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">trade_id,</span><span class="sc24">
+        </span><span class="sc12">$</span><span class="sc3">1</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">trade_id_2,</span><span class="sc24">
+        </span><span class="sc0">(int)</span><span class="sc12">$</span><span class="sc3">2</span><span class="sc12">*$</span><span class="sc3">5</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">user3ratingproduct;</span><span class="sc24">
+</span><span class="sc0">grouped_product_matrix</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">group</span><span class="sc24">  </span><span class="sc0">product_matrix</span><span class="sc24">  </span><span class="sc4">by</span><span class="sc24"> </span><span class="sc0">trade_id;</span><span class="sc24">    
+    
+
+</span><span class="sc0">result_Vector</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">FOREACH</span><span class="sc24"> </span><span class="sc0">grouped_product_matrix</span><span class="sc24"> </span><span class="sc4">GENERATE</span><span class="sc24"> 
+        </span><span class="sc12">$</span><span class="sc3">0</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">trade_id,</span><span class="sc24">
+        </span><span class="sc0">SUM(product_matrix</span><span class="sc12">.</span><span class="sc0">user3ratingproduct)</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">user3ratingtotal;</span><span class="sc24">
+        
+</span><span class="sc0">joinedrecommendations</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">JOIN</span><span class="sc24"> </span><span class="sc0">result_Vector</span><span class="sc24"> </span><span class="sc4">by</span><span class="sc24"> </span><span class="sc0">trade_id</span><span class="sc24"> </span><span class="sc0">LEFT,</span><span class="sc24"> </span><span class="sc0">filteredtradesforuser3</span><span class="sc24"> </span><span class="sc4">BY</span><span class="sc24"> </span><span class="sc0">trade_id;</span><span class="sc24">
+</span><span class="sc0">filteredrecommendations</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">filter</span><span class="sc24"> </span><span class="sc0">joinedrecommendations</span><span class="sc24"> </span><span class="sc4">BY</span><span class="sc24"> </span><span class="sc12">$</span><span class="sc3">2</span><span class="sc24"> </span><span class="sc4">is</span><span class="sc24"> </span><span class="sc0">null;</span><span class="sc24">
+
+</span><span class="sc0">user3recommendation</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">FOREACH</span><span class="sc24"> </span><span class="sc0">filteredrecommendations</span><span class="sc24"> </span><span class="sc4">GENERATE</span><span class="sc24">
+</span><span class="sc12">$</span><span class="sc3">0</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">trade_id,</span><span class="sc24">
+</span><span class="sc12">$</span><span class="sc3">1</span><span class="sc24"> </span><span class="sc4">as</span><span class="sc24"> </span><span class="sc0">recommendation;</span><span class="sc24">
+
+</span><span class="sc0">user3recommendationsorted</span><span class="sc24"> </span><span class="sc12">=</span><span class="sc24"> </span><span class="sc4">order</span><span class="sc24"> </span><span class="sc0">user3recommendation</span><span class="sc24"> </span><span class="sc4">by</span><span class="sc24"> </span><span class="sc0">recommendation</span><span class="sc24"> </span><span class="sc0">desc;</span><span class="sc24">
+
+</span><span class="sc4">store</span><span class="sc24"> </span><span class="sc0">user3recommendationsorted</span><span class="sc24"> </span><span class="sc4">into</span><span class="sc24"> </span><span class="sc0">'s3:</span><span class="sc12">//</span><span class="sc0">iyadamazon</span><span class="sc12">/</span><span class="sc0">results</span><span class="sc12">/</span><span class="sc0">tradesrecommendations</span><span class="sc12">.</span><span class="sc0">txt'</span><span class="sc24"> </span><span class="sc4">using</span><span class="sc24"> </span><span class="sc0">PigStorage('\t');</span></div></body>
+</html>

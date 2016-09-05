@@ -1,0 +1,58 @@
+grunt> result_Vector = FOREACH grouped_product_matrix GENERATE
+>> $0 as trade_id,
+>> SUM(product_matrix.user3ratingproduct) as user3ratingtotal;
+grunt>
+grunt> joinedrecommendations = JOIN result_Vector by trade_id LEFT, filteredtradesforuser3 BY trade_id;
+grunt> filteredrecommendations = filter joinedrecommendations BY $2 is null;
+grunt>
+grunt> user3recommendation = FOREACH filteredrecommendations GENERATE
+>> $0 as trade_id,
+>> $1 as recommendation;
+grunt>
+grunt> user3recommendationsorted = order user3recommendation by recommendation desc;
+grunt>
+
+grunt> describe result_Vector;
+result_Vector: {trade_id: int,user3ratingtotal: long}
+grunt> dump result_Vector;
+(101,44)
+(102,28)
+(103,36)
+(104,33)
+(105,18)
+(106,18)
+(107,5)
+
+
+grunt> describe joinedrecommendations;
+joinedrecommendations: {result_Vector::trade_id: int,result_Vector::user3ratingtotal: long,filteredtradesforuser3::investor_id: int,filteredtradesforuser3::trade_id: int,filteredtradesforuser3::rating: int}
+grunt> dump joinedrecommendations;
+(101,44,3,101,3)
+(102,28,3,102,2)
+(103,36,3,103,3)
+(104,33,3,104,2)
+(105,18,,,)
+(106,18,,,)
+(107,5,,,)
+
+
+grunt> describe filteredrecommendations;
+filteredrecommendations: {result_Vector::trade_id: int,result_Vector::user3ratingtotal: long,filteredtradesforuser3::investor_id: int,filteredtradesforuser3::trade_id: int,filteredtradesforuser3::rating: int}
+grunt> dump filteredrecommendations;
+(105,18,,,)
+(106,18,,,)
+(107,5,,,)
+
+grunt> describe user3recommendation;
+user3recommendation: {trade_id: int,recommendation: long}
+grunt> dump user3recommendation;
+(105,18)
+(106,18)
+(107,5)
+
+grunt> describe user3recommendationsorted;
+user3recommendationsorted: {trade_id: int,recommendation: long}
+grunt> dump user3recommendationsorted;
+(106,18)
+(105,18)
+(107,5)

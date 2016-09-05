@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc5 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc7 {
+	color: #808080;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc11 {
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc11">Layout_TradeData</span><span class="sc0"> </span><span class="sc10">:=</span><span class="sc0"> </span><span class="sc5">RECORD</span><span class="sc0">
+</span><span class="sc11">INTEGER4</span><span class="sc0"> </span><span class="sc11">investor_id</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc11">INTEGER4</span><span class="sc0"> </span><span class="sc11">trade_id</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc11">INTEGER4</span><span class="sc0"> </span><span class="sc11">rating</span><span class="sc10">;</span><span class="sc0">
+</span><span class="sc5">END</span><span class="sc10">;</span><span class="sc0">
+
+</span><span class="sc11">EXPORT</span><span class="sc0"> </span><span class="sc11">trade</span><span class="sc0"> </span><span class="sc10">:=</span><span class="sc0"> </span><span class="sc11">DATASET</span><span class="sc10">(</span><span class="sc7">'~online::ik::project::trades'</span><span class="sc10">,</span><span class="sc0">
+            </span><span class="sc11">Layout_TradeData</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">CSV</span><span class="sc10">(</span><span class="sc11">SEPARATOR</span><span class="sc10">(</span><span class="sc7">'\t'</span><span class="sc10">),</span><span class="sc11">QUOTE</span><span class="sc10">(</span><span class="sc7">''</span><span class="sc10">)));</span><span class="sc0">
+</span></div></body>
+</html>

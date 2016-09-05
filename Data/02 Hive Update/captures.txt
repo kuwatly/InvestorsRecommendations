@@ -1,0 +1,354 @@
+[root@sandbox ~]# hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+hive> CREATE TABLE trades (
+    >   investor_id INT ,
+    >   trade_id INT ,
+    >   rating INT)
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY '\t'
+    > STORED AS TEXTFILE ;
+OK
+Time taken: 2.62 seconds
+hive> SHOW TABLES;
+OK
+sample_07
+sample_08
+trades
+Time taken: 0.607 seconds, Fetched: 3 row(s)
+hive> DESCRIBE trades;
+OK
+investor_id             int
+trade_id                int
+rating                  int
+Time taken: 0.566 seconds, Fetched: 3 row(s)
+hive> LOAD DATA
+    >   LOCAL INPATH '/root/trades.txt'
+    >   OVERWRITE INTO TABLE trades;
+Copying data from file:/root/trades.txt
+Copying file: file:/root/trades.txt
+Loading data to table default.trades
+rmr: DEPRECATED: Please use 'rm -r' instead.
+Moved: 'hdfs://sandbox.hortonworks.com:8020/apps/hive/warehouse/trades' to trash at: hdfs://sandbox.hortonworks.com:8020/user/root/.Trash/Current
+Table default.trades stats: [numFiles=1, numRows=0, totalSize=205, rawDataSize=0]
+OK
+Time taken: 1.298 seconds
+hive> select * from trades;
+OK
+1       101     1
+2       101     2
+3       101     3
+4       101     4
+5       101     5
+6       101     5
+2       102     1
+3       102     2
+5       102     3
+1       103     1
+2       103     2
+3       103     3
+5       103     4
+1       104     1
+3       104     2
+5       104     4
+6       104     5
+4       105     1
+5       105     2
+6       105     5
+1       106     1
+5       106     2
+6       107     1
+Time taken: 0.864 seconds, Fetched: 23 row(s)
+hive>
+
+
+*******************************************************************************
+hive> CREATE TABLE cooccurrence AS
+    > SELECT
+    >   a.trade_id ,
+    >   b.trade_id AS trade_id_2 ,
+    >   COUNT(*) AS tradescount
+    > FROM
+    >   trades a
+    >   JOIN trades b ON a.investor_id = b.investor_id
+    > GROUP BY
+    >   a.trade_id ,
+    >   b.trade_id;
+Query ID = root_20140727073636_d9567595-8745-4871-b783-b3ec45747297
+Total jobs = 1
+14/07/27 07:36:47 WARN conf.Configuration: file:/tmp/root/hive_2014-07-27_07-36-43_086_4055741953442478727-1/-local-10007/jobconf.xml:an attempt to override final parameter: mapreduce.job.end-notification.max.retry.interval;  Ignoring.
+14/07/27 07:36:47 WARN conf.Configuration: file:/tmp/root/hive_2014-07-27_07-36-43_086_4055741953442478727-1/-local-10007/jobconf.xml:an attempt to override final parameter: mapreduce.job.end-notification.max.attempts;  Ignoring.
+Execution log at: /tmp/root/root_20140727073636_d9567595-8745-4871-b783-b3ec45747297.log
+2014-07-27 07:36:48     Starting to launch local task to process map join;      maximum memory = 260177920
+2014-07-27 07:36:49     Dump the side-table into file: file:/tmp/root/hive_2014-07-27_07-36-43_086_4055741953442478727-1/-local-10004/HashTable-Stage-2/MapJoin-mapfile00--.hashtable
+2014-07-27 07:36:49     Uploaded 1 File to: file:/tmp/root/hive_2014-07-27_07-36-43_086_4055741953442478727-1/-local-10004/HashTable-Stage-2/MapJoin-mapfile00--.hashtable (482 bytes)
+2014-07-27 07:36:49     End of local task; Time Taken: 1.045 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1406464910035_0008, Tracking URL = http://sandbox.hortonworks.com:8088/proxy/application_1406464910035_0008/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1406464910035_0008
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2014-07-27 07:37:00,927 Stage-2 map = 0%,  reduce = 0%
+2014-07-27 07:37:06,608 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.24 sec
+2014-07-27 07:37:14,343 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 2.86 sec
+MapReduce Total cumulative CPU time: 2 seconds 860 msec
+Ended Job = job_1406464910035_0008
+Moving data to: hdfs://sandbox.hortonworks.com:8020/apps/hive/warehouse/cooccurrence
+Table default.cooccurrence stats: [numFiles=1, numRows=43, totalSize=430, rawDataSize=387]
+MapReduce Jobs Launched:
+Job 0: Map: 1  Reduce: 1   Cumulative CPU: 2.86 sec   HDFS Read: 432 HDFS Write: 507 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 860 msec
+OK
+Time taken: 32.728 seconds
+hive> select * from cooccurrence;
+OK
+101     101     6
+101     102     3
+101     103     4
+101     104     4
+101     105     3
+101     106     2
+101     107     1
+102     101     3
+102     102     3
+102     103     3
+102     104     2
+102     105     1
+102     106     1
+103     101     4
+103     102     3
+103     103     4
+103     104     3
+103     105     1
+103     106     2
+104     101     4
+104     102     2
+104     103     3
+104     104     4
+104     105     2
+104     106     2
+104     107     1
+105     101     3
+105     102     1
+105     103     1
+105     104     2
+105     105     3
+105     106     1
+105     107     1
+106     101     2
+106     102     1
+106     103     2
+106     104     2
+106     105     1
+106     106     2
+107     101     1
+107     104     1
+107     105     1
+107     107     1
+Time taken: 0.372 seconds, Fetched: 43 row(s)
+hive>
+
+
+****************************************************************************
+
+hive> CREATE TABLE product_matrix AS
+    > SELECT
+    >   a.trade_id ,
+    >   a.trade_id_2 ,
+    >  sum(b.rating*a.tradescount) as cooccurrencecount
+    > FROM
+    > cooccurrence a,
+    > trades b
+    > where
+    > a.trade_id_2= b.trade_id
+    > AND b.investor_id=3
+    > group by
+    > a.trade_id,
+    > a.trade_id_2;
+Query ID = root_20140727073838_4d464e0d-e201-4538-8ae7-2f42c1effeb9
+Total jobs = 1
+14/07/27 07:38:07 WARN conf.Configuration: file:/tmp/root/hive_2014-07-27_07-38-03_834_2227333854603118385-1/-local-10007/jobconf.xml:an attempt to override final parameter: mapreduce.job.end-notification.max.retry.interval;  Ignoring.
+14/07/27 07:38:07 WARN conf.Configuration: file:/tmp/root/hive_2014-07-27_07-38-03_834_2227333854603118385-1/-local-10007/jobconf.xml:an attempt to override final parameter: mapreduce.job.end-notification.max.attempts;  Ignoring.
+Execution log at: /tmp/root/root_20140727073838_4d464e0d-e201-4538-8ae7-2f42c1effeb9.log
+2014-07-27 07:38:08     Starting to launch local task to process map join;      maximum memory = 260177920
+2014-07-27 07:38:10     Dump the side-table into file: file:/tmp/root/hive_2014-07-27_07-38-03_834_2227333854603118385-1/-local-10004/HashTable-Stage-2/MapJoin-mapfile11--.hashtable
+2014-07-27 07:38:10     Uploaded 1 File to: file:/tmp/root/hive_2014-07-27_07-38-03_834_2227333854603118385-1/-local-10004/HashTable-Stage-2/MapJoin-mapfile11--.hashtable (348 bytes)
+2014-07-27 07:38:10     End of local task; Time Taken: 1.457 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1406464910035_0009, Tracking URL = http://sandbox.hortonworks.com:8088/proxy/application_1406464910035_0009/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1406464910035_0009
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2014-07-27 07:38:18,814 Stage-2 map = 0%,  reduce = 0%
+2014-07-27 07:38:25,219 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.8 sec
+2014-07-27 07:38:34,040 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.7 sec
+MapReduce Total cumulative CPU time: 3 seconds 700 msec
+Ended Job = job_1406464910035_0009
+Moving data to: hdfs://sandbox.hortonworks.com:8020/apps/hive/warehouse/product_matrix
+Table default.product_matrix stats: [numFiles=1, numRows=26, totalSize=265, rawDataSize=239]
+MapReduce Jobs Launched:
+Job 0: Map: 1  Reduce: 1   Cumulative CPU: 3.7 sec   HDFS Read: 661 HDFS Write: 344 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 700 msec
+OK
+Time taken: 31.622 seconds
+hive> select * from product_matrix;
+OK
+101     101     18
+101     102     6
+101     103     12
+101     104     8
+102     101     9
+102     102     6
+102     103     9
+102     104     4
+103     101     12
+103     102     6
+103     103     12
+103     104     6
+104     101     12
+104     102     4
+104     103     9
+104     104     8
+105     101     9
+105     102     2
+105     103     3
+105     104     4
+106     101     6
+106     102     2
+106     103     6
+106     104     4
+107     101     3
+107     104     2
+Time taken: 0.334 seconds, Fetched: 26 row(s)
+
+
+********************************************************************************
+
+hive> CREATE TABLE result_Vector AS
+    > select trade_id , sum(cooccurrencecount) as recommended
+    > from product_matrix
+    > group by trade_id
+    > order by recommended DESC;
+Query ID = root_20140727073939_49affff7-d9cc-40ee-9ba2-06b0eefb650d
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1406464910035_0010, Tracking URL = http://sandbox.hortonworks.com:8088/proxy/application_1406464910035_0010/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1406464910035_0010
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2014-07-27 07:39:15,354 Stage-1 map = 0%,  reduce = 0%
+2014-07-27 07:39:21,922 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.35 sec
+2014-07-27 07:39:28,464 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.69 sec
+MapReduce Total cumulative CPU time: 2 seconds 690 msec
+Ended Job = job_1406464910035_0010
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1406464910035_0011, Tracking URL = http://sandbox.hortonworks.com:8088/proxy/application_1406464910035_0011/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1406464910035_0011
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2014-07-27 07:39:36,881 Stage-2 map = 0%,  reduce = 0%
+2014-07-27 07:39:43,283 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.13 sec
+2014-07-27 07:39:49,755 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 2.53 sec
+MapReduce Total cumulative CPU time: 2 seconds 530 msec
+Ended Job = job_1406464910035_0011
+Moving data to: hdfs://sandbox.hortonworks.com:8020/apps/hive/warehouse/result_vector
+Table default.result_vector stats: [numFiles=1, numRows=0, totalSize=48, rawDataSize=0]
+MapReduce Jobs Launched:
+Job 0: Map: 1  Reduce: 1   Cumulative CPU: 2.69 sec   HDFS Read: 498 HDFS Write: 229 SUCCESS
+Job 1: Map: 1  Reduce: 1   Cumulative CPU: 2.53 sec   HDFS Read: 606 HDFS Write: 125 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 220 msec
+OK
+Time taken: 43.36 seconds
+hive> select * from result_Vector;
+OK
+101     44
+103     36
+104     33
+102     28
+106     18
+105     18
+107     5
+Time taken: 0.356 seconds, Fetched: 7 row(s)
+
+
+
+*****************************************************************************
+
+hive> CREATE TABLE User3_recommendations AS
+    > SELECT  DISTINCT a.trade_id, a.recommended
+    > FROM    result_vector a
+    >         LEFT JOIN trades b
+    >           ON a.trade_id = b.trade_id AND b.investor_id = 3
+    > WHERE   b.rating IS NULL;
+Query ID = root_20140727074040_b89d6d25-1b94-4ee2-a0b7-973751b1ab73
+Total jobs = 1
+14/07/27 07:40:23 WARN conf.Configuration: file:/tmp/root/hive_2014-07-27_07-40-17_726_7960976239964976414-1/-local-10007/jobconf.xml:an attempt to override final parameter: mapreduce.job.end-notification.max.retry.interval;  Ignoring.
+14/07/27 07:40:23 WARN conf.Configuration: file:/tmp/root/hive_2014-07-27_07-40-17_726_7960976239964976414-1/-local-10007/jobconf.xml:an attempt to override final parameter: mapreduce.job.end-notification.max.attempts;  Ignoring.
+Execution log at: /tmp/root/root_20140727074040_b89d6d25-1b94-4ee2-a0b7-973751b1ab73.log
+2014-07-27 07:40:24     Starting to launch local task to process map join;      maximum memory = 260177920
+2014-07-27 07:40:26     Dump the side-table into file: file:/tmp/root/hive_2014-07-27_07-40-17_726_7960976239964976414-1/-local-10004/HashTable-Stage-2/MapJoin-mapfile21--.hashtable
+2014-07-27 07:40:26     Uploaded 1 File to: file:/tmp/root/hive_2014-07-27_07-40-17_726_7960976239964976414-1/-local-10004/HashTable-Stage-2/MapJoin-mapfile21--.hashtable (340 bytes)
+2014-07-27 07:40:26     End of local task; Time Taken: 2.128 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1406464910035_0012, Tracking URL = http://sandbox.hortonworks.com:8088/proxy/application_1406464910035_0012/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1406464910035_0012
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2014-07-27 07:40:35,721 Stage-2 map = 0%,  reduce = 0%
+2014-07-27 07:40:42,213 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.69 sec
+2014-07-27 07:40:48,624 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 3.23 sec
+MapReduce Total cumulative CPU time: 3 seconds 230 msec
+Ended Job = job_1406464910035_0012
+Moving data to: hdfs://sandbox.hortonworks.com:8020/apps/hive/warehouse/user3_recommendations
+Table default.user3_recommendations stats: [numFiles=1, numRows=0, totalSize=20, rawDataSize=0]
+MapReduce Jobs Launched:
+Job 0: Map: 1  Reduce: 1   Cumulative CPU: 3.23 sec   HDFS Read: 280 HDFS Write: 105 SUCCESS
+Total MapReduce CPU Time Spent: 3 seconds 230 msec
+OK
+Time taken: 32.271 seconds
+
+
+hive> select * from User3_recommendations;
+OK
+105     18
+106     18
+107     5
+Time taken: 0.294 seconds, Fetched: 3 row(s)
+hive>
+

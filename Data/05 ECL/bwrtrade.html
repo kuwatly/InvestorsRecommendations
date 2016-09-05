@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+	color: #808080;
+}
+.sc1 {
+}
+.sc7 {
+	color: #FF8000;
+}
+.sc8 {
+	color: #FF8000;
+}
+.sc9 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc10 {
+	color: #808080;
+}
+.sc13 {
+	font-weight: bold;
+	color: #000080;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc1">import</span><span class="sc0"> </span><span class="sc8">$</span><span class="sc13">;</span><span class="sc0">
+</span><span class="sc1">Output</span><span class="sc13">(</span><span class="sc8">$</span><span class="sc13">.</span><span class="sc1">trade</span><span class="sc13">,</span><span class="sc0"> </span><span class="sc1">NAMED</span><span class="sc13">(</span><span class="sc10">'Trades'</span><span class="sc13">));</span><span class="sc0">
+
+</span><span class="sc1">Joined_Record</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc9">RECORD</span><span class="sc0">
+    </span><span class="sc1">INTEGER4</span><span class="sc0"> </span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">INTEGER4</span><span class="sc0"> </span><span class="sc1">trade_id_2</span><span class="sc13">;</span><span class="sc0">
+</span><span class="sc9">END</span><span class="sc13">;</span><span class="sc0">
+
+</span><span class="sc1">Joined_Record</span><span class="sc0"> </span><span class="sc1">JoinThem</span><span class="sc13">(</span><span class="sc8">$</span><span class="sc13">.</span><span class="sc1">trade</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">,</span><span class="sc0"> </span><span class="sc8">$</span><span class="sc13">.</span><span class="sc1">trade</span><span class="sc0"> </span><span class="sc1">R</span><span class="sc13">)</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">TRANSFORM</span><span class="sc0">
+    </span><span class="sc1">SELF</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">SELF</span><span class="sc13">.</span><span class="sc1">trade_id_2</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">R</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+</span><span class="sc9">END</span><span class="sc13">;</span><span class="sc0">
+
+</span><span class="sc1">JoinedTrades</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">JOIN</span><span class="sc13">(</span><span class="sc8">$</span><span class="sc13">.</span><span class="sc1">trade</span><span class="sc13">,</span><span class="sc8">$</span><span class="sc13">.</span><span class="sc1">trade</span><span class="sc13">,</span><span class="sc0">
+                                  </span><span class="sc1">LEFT</span><span class="sc13">.</span><span class="sc1">investor_id</span><span class="sc0"> </span><span class="sc13">=</span><span class="sc0"> </span><span class="sc1">RIGHT</span><span class="sc13">.</span><span class="sc1">investor_id</span><span class="sc13">,</span><span class="sc0">
+                                                </span><span class="sc1">JoinThem</span><span class="sc13">(</span><span class="sc1">LEFT</span><span class="sc13">,</span><span class="sc1">RIGHT</span><span class="sc13">));</span><span class="sc0">
+                                                
+</span><span class="sc1">OUTPUT</span><span class="sc0"> </span><span class="sc13">(</span><span class="sc1">JoinedTrades</span><span class="sc13">,</span><span class="sc1">NAMED</span><span class="sc13">(</span><span class="sc10">'JoinedTrades'</span><span class="sc13">));</span><span class="sc0">
+
+</span><span class="sc1">COOCCURRENCE_Record</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc9">RECORD</span><span class="sc0">
+    </span><span class="sc1">JoinedTrades</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">JoinedTrades</span><span class="sc13">.</span><span class="sc1">trade_id_2</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">tradescount</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc1">COUNT</span><span class="sc13">(</span><span class="sc1">GROUP</span><span class="sc13">);</span><span class="sc0">
+</span><span class="sc9">END</span><span class="sc13">;</span><span class="sc0">
+
+
+</span><span class="sc1">COOCCURRENCE_Matrix</span><span class="sc13">:=</span><span class="sc1">TABLE</span><span class="sc13">(</span><span class="sc1">JoinedTrades</span><span class="sc13">,</span><span class="sc1">COOCCURRENCE_Record</span><span class="sc13">,</span><span class="sc1">JoinedTrades</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">,</span><span class="sc1">JoinedTrades</span><span class="sc13">.</span><span class="sc1">trade_id_2</span><span class="sc13">);</span><span class="sc0">
+</span><span class="sc1">output</span><span class="sc0"> </span><span class="sc13">(</span><span class="sc1">COOCCURRENCE_Matrix</span><span class="sc13">,</span><span class="sc1">NAMED</span><span class="sc13">(</span><span class="sc10">'COOCCURRENCE_Matrix'</span><span class="sc13">));</span><span class="sc0">
+
+</span><span class="sc1">filteredtradesforuser3</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc8">$</span><span class="sc13">.</span><span class="sc1">trade</span><span class="sc13">(</span><span class="sc1">investor_id</span><span class="sc0"> </span><span class="sc13">=</span><span class="sc0"> </span><span class="sc7">3</span><span class="sc13">);</span><span class="sc0">
+</span><span class="sc1">output</span><span class="sc0"> </span><span class="sc13">(</span><span class="sc1">filteredtradesforuser3</span><span class="sc13">,</span><span class="sc1">NAMED</span><span class="sc13">(</span><span class="sc10">'filteredtradesforuser3'</span><span class="sc13">));</span><span class="sc0">    
+
+</span><span class="sc1">product_Record</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc9">RECORD</span><span class="sc0">
+    </span><span class="sc1">COOCCURRENCE_Record</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">COOCCURRENCE_Record</span><span class="sc13">.</span><span class="sc1">trade_id_2</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">INTEGER4</span><span class="sc0"> </span><span class="sc1">user3ratingproduct</span><span class="sc13">;</span><span class="sc0">
+</span><span class="sc9">END</span><span class="sc13">;</span><span class="sc0">
+
+</span><span class="sc1">product_Record</span><span class="sc0"> </span><span class="sc1">MutiplyThem</span><span class="sc13">(</span><span class="sc1">COOCCURRENCE_Matrix</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">,</span><span class="sc0"> </span><span class="sc1">filteredtradesforuser3</span><span class="sc0"> </span><span class="sc1">R</span><span class="sc13">)</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">TRANSFORM</span><span class="sc0">
+    </span><span class="sc1">SELF</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">SELF</span><span class="sc13">.</span><span class="sc1">trade_id_2</span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">.</span><span class="sc1">trade_id_2</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">SELF</span><span class="sc13">.</span><span class="sc1">user3ratingproduct</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">.</span><span class="sc1">tradescount</span><span class="sc0"> </span><span class="sc13">*</span><span class="sc0"> </span><span class="sc1">R</span><span class="sc13">.</span><span class="sc1">rating</span><span class="sc13">;</span><span class="sc0">
+</span><span class="sc9">END</span><span class="sc13">;</span><span class="sc0">
+
+</span><span class="sc1">product_matrix</span><span class="sc0">   </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">JOIN</span><span class="sc13">(</span><span class="sc1">COOCCURRENCE_Matrix</span><span class="sc13">,</span><span class="sc1">filteredtradesforuser3</span><span class="sc13">,</span><span class="sc0">
+                                  </span><span class="sc1">LEFT</span><span class="sc13">.</span><span class="sc1">trade_id_2</span><span class="sc0"> </span><span class="sc13">=</span><span class="sc0"> </span><span class="sc1">RIGHT</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">,</span><span class="sc0">
+                                                </span><span class="sc1">MutiplyThem</span><span class="sc13">(</span><span class="sc1">LEFT</span><span class="sc13">,</span><span class="sc1">RIGHT</span><span class="sc13">));</span><span class="sc0">
+</span><span class="sc1">OUTPUT</span><span class="sc0"> </span><span class="sc13">(</span><span class="sc1">product_matrix</span><span class="sc13">,</span><span class="sc1">NAMED</span><span class="sc13">(</span><span class="sc10">'product_matrix'</span><span class="sc13">));</span><span class="sc0">
+
+</span><span class="sc1">result_Vector</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc9">RECORD</span><span class="sc0">
+    </span><span class="sc1">product_matrix</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">INTEGER4</span><span class="sc0"> </span><span class="sc1">user3ratingtotal</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">SUM</span><span class="sc13">(</span><span class="sc1">GROUP</span><span class="sc13">,</span><span class="sc1">product_matrix</span><span class="sc13">.</span><span class="sc1">user3ratingproduct</span><span class="sc13">);</span><span class="sc0">
+</span><span class="sc9">END</span><span class="sc13">;</span><span class="sc0">    
+        
+
+</span><span class="sc1">recommendations</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">TABLE</span><span class="sc13">(</span><span class="sc1">product_matrix</span><span class="sc13">,</span><span class="sc1">result_Vector</span><span class="sc13">,</span><span class="sc1">trade_id</span><span class="sc13">);</span><span class="sc0">
+</span><span class="sc1">OUTPUT</span><span class="sc0"> </span><span class="sc13">(</span><span class="sc1">recommendations</span><span class="sc13">,</span><span class="sc1">NAMED</span><span class="sc13">(</span><span class="sc10">'recommendations'</span><span class="sc13">));</span><span class="sc0">
+
+</span><span class="sc1">filtered_result_record</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc9">RECORD</span><span class="sc0">
+    </span><span class="sc1">INTEGER4</span><span class="sc0"> </span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">INTEGER4</span><span class="sc0"> </span><span class="sc1">user3ratingtotal</span><span class="sc13">;</span><span class="sc0">
+</span><span class="sc9">END</span><span class="sc13">;</span><span class="sc0">
+
+</span><span class="sc1">filtered_result_record</span><span class="sc0"> </span><span class="sc1">JoinRecs</span><span class="sc13">(</span><span class="sc1">result_Vector</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">,</span><span class="sc0"> </span><span class="sc1">filteredtradesforuser3</span><span class="sc0"> </span><span class="sc1">R</span><span class="sc13">)</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">TRANSFORM</span><span class="sc0">
+    </span><span class="sc1">SELF</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">;</span><span class="sc0">
+    </span><span class="sc1">SELF</span><span class="sc13">.</span><span class="sc1">user3ratingtotal</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">L</span><span class="sc13">.</span><span class="sc1">user3ratingtotal</span><span class="sc13">;</span><span class="sc0">
+</span><span class="sc9">END</span><span class="sc13">;</span><span class="sc0">
+
+</span><span class="sc1">filtered_result</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">JOIN</span><span class="sc13">(</span><span class="sc1">recommendations</span><span class="sc13">,</span><span class="sc1">filteredtradesforuser3</span><span class="sc13">,</span><span class="sc0">
+                                  </span><span class="sc1">LEFT</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc0"> </span><span class="sc13">=</span><span class="sc0"> </span><span class="sc1">RIGHT</span><span class="sc13">.</span><span class="sc1">trade_id</span><span class="sc13">,</span><span class="sc0">
+                                                </span><span class="sc1">JoinRecs</span><span class="sc13">(</span><span class="sc1">LEFT</span><span class="sc13">,</span><span class="sc1">RIGHT</span><span class="sc13">),</span><span class="sc0">
+                                  </span><span class="sc1">LEFT</span><span class="sc0"> </span><span class="sc1">ONLY</span><span class="sc13">);</span><span class="sc0">                                               
+</span><span class="sc1">OUTPUT</span><span class="sc0"> </span><span class="sc13">(</span><span class="sc1">filtered_result</span><span class="sc13">,</span><span class="sc1">NAMED</span><span class="sc13">(</span><span class="sc10">'filtered_result'</span><span class="sc13">));</span><span class="sc0">
+
+</span><span class="sc1">sorted_filtered_result</span><span class="sc0"> </span><span class="sc13">:=</span><span class="sc0"> </span><span class="sc1">Sort</span><span class="sc13">(</span><span class="sc1">filtered_result</span><span class="sc13">,-</span><span class="sc1">user3ratingtotal</span><span class="sc13">);</span><span class="sc0">
+</span><span class="sc1">OUTPUT</span><span class="sc0"> </span><span class="sc13">(</span><span class="sc1">sorted_filtered_result</span><span class="sc13">,</span><span class="sc1">NAMED</span><span class="sc13">(</span><span class="sc10">'sorted_filtered_result'</span><span class="sc13">));</span><span class="sc0">
+</span></div></body>
+</html>

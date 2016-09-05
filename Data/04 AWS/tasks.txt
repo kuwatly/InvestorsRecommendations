@@ -1,0 +1,8 @@
+Task1 Map1 Reduce0
+Task2 Map2 Reduce1
+Task3 Map3 Reduce1
+Task4 Map2 Reduce1
+Task5 Map1 Reduce1
+Task6 Map2 Reduce1
+Task7 Map1 Reduce1
+Task8 Map1 Reduce1
